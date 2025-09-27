@@ -1,0 +1,36 @@
+{
+    "name": "kanopi/cypress-wordpress-support-command",
+    "description": " A set of default support commands to get you jumpstarted configuring Cypress for WordPress.",
+    "type": "cypress-support",
+    "homepage": "https://github.com/kanopi/cypress-wordpress-support-command",
+    "keywords": [
+        "WordPress",
+        "cypress",
+        "support-commands",
+        "e2e",
+        "cypress.io",
+        "integration-test",
+        "testing",
+        "automation"
+    ],
+    "authors": [
+        {
+            "name": "Paul Sheldrake",
+            "role": "Trouble maker"
+        }
+    ],
+    "require": {
+        "oomphinc/composer-installers-extender": "^2.0"
+    },
+    "support": {
+        "issues": "https://github.com/kanopi/cypress-wordpress-support-command"
+    },
+    "license": "GPL-2.0-or-later",
+    "minimum-stabilty": "dev",
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
+    }
+}
