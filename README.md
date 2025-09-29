@@ -17,6 +17,8 @@ Add two entries in composer.json for an install-type and its path:
 }
 ```
 
+Make sure you also add that installed path to your `.gitignore` file.  I.E. `tests/cypress/cypress/support/cypress-wordpress-support-commands`
+
 ### Tell Cypress where to import the tests
 
 In the `support` folder for where your Cypress tests are located, edit `commands.js` and add the
