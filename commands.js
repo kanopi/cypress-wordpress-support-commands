@@ -6,7 +6,6 @@ require('./createComponentImage');
 require('./createComponentParagraph');
 require('./login');
 require('./logout');
-require('./maRegisterUser');
 require('./mediaLibraryAdd');
 require('./mediaLibrarySelect');
 require('./mediaLibraryUpload');
