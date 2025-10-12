@@ -1,5 +1,5 @@
 // Examples:
-// cy.login();  // Logins as the default testing user.
+// cy.login();  // Logins as the default testing user. user: cypress, password: cypress
 // cy.login('username', 'password'); // login as a specific user.
 
 Cypress.Commands.add('login', (usernameParam = '', password = '') => {
