@@ -14,8 +14,8 @@ Cypress.Commands.add('wp', (command, options = {}) => {
     exec_command = 'lando wp ' + command;
   }
 
-  if (Cypress.env('DRUSH_IS_DDEV')) {
-    exec_command = 'ddev drush ' + command;
+  if (Cypress.env('WP_CLI_IS_DDEV')) {
+    exec_command = 'ddev wp ' + command;
   }
 
   // In the format of PANTHEON_SITE_ID.ENVIRONMENT_ID
