@@ -9,9 +9,6 @@ Cypress.Commands.add('visitEditPage', (url) => {
   const ajaxBlocks = 'ajaxBlocks-' + Math.random();
   cy.intercept('GET', '/wp-json/wp/v2/blocks?*').as(ajaxBlocks)
 
-  const ajaxUsers = 'ajaxUsers-' + Math.random();
-  cy.intercept('GET', '/wp-json/wp/v2/users?*').as(ajaxUsers)
-
   const ajaxTaxonomies = 'ajaxTaxonomies-' + Math.random();
   cy.intercept('GET', '/wp-json/wp/v2/taxonomies?*').as(ajaxTaxonomies)
 
@@ -27,7 +24,6 @@ Cypress.Commands.add('visitEditPage', (url) => {
 
   // Wait for our ajax requests.
   cy.wait('@' + ajaxBlocks).its('response.statusCode').should('eq', 200)
-  cy.wait('@' + ajaxUsers).its('response.statusCode').should('eq', 200)
   cy.wait('@' + ajaxTaxonomies).its('response.statusCode').should('eq', 200)
   cy.wait('@' + ajaxWpPatternCategory).its('response.statusCode').should('eq', 200)
 })
