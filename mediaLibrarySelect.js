@@ -22,6 +22,6 @@ Cypress.Commands.add("mediaLibrarySelect", (selector, fileName) => {
       cy.wait(1000)
       cy.get('.attachment').first().click();
     });
-    cy.get('.media-toolbar-primary button').click()
+    cy.get('.media-toolbar-primary button').should('not.be.disabled').click()
   })
 });

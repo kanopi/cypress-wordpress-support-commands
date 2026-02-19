@@ -21,7 +21,6 @@ Cypress.Commands.add("mediaLibraryUpload", (selector, fileName) => {
     cy.wait('@' + ajaxMediaLibraryUpload)
       .its('response.statusCode')
       .should('eq', 200)
-    cy.wait(1000)
-    cy.get('.media-toolbar-primary button').click()
+    cy.get('.media-toolbar-primary button').should('not.be.disabled').click()
   })
 });
