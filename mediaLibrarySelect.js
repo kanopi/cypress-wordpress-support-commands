@@ -14,6 +14,19 @@ Cypress.Commands.add("mediaLibrarySelect", (selector, fileName) => {
   cy.wait('@' + ajaxMediaLibrarySelect).its('response.statusCode').should('eq', 200)
 
   cy.get('.media-modal-content').then(() => {
+    // WP Media Folder plugin replaces the standard media library grid with a
+    // folder-based view. When active, searching returns zero actual image
+    // attachments (only folders). Calling displayAllMedia() via the plugin's
+    // JS API bypasses the folder view and shows a flat file listing.
+    // This is a no-op on sites without the plugin since the check is guarded
+    // by a typeof check on the global wpmfFoldersFiltersModule object.
+    cy.window().then((win) => {
+      if (typeof win.wpmfFoldersFiltersModule !== 'undefined') {
+        win.wpmfFoldersFiltersModule.displayAllMedia('#wpmf_all_media');
+      }
+    });
+    cy.wait(1000)
+
     const ajaxMediaLibrarySelect = 'mediaLibrary-' + Math.random();
     cy.intercept('POST', '/wp-admin/admin-ajax.php').as(ajaxMediaLibrarySelect)
     cy.get('#media-search-input').type(fileName);
