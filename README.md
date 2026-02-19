@@ -108,7 +108,7 @@ cy.editorReset();
 ### Publishing Commands
 
 #### publish
-Clicks the publish button and publishes the post/page.
+Clicks the publish button and publishes the post/page. Compatible with WordPress 6.9+ which uses the REST API for publishing.
 
 ```javascript
 cy.publish(); // Publishes and views post
@@ -148,7 +148,7 @@ cy.mediaLibraryAdd('sample.png');
 ```
 
 #### mediaLibrarySelect
-Opens media library modal and selects an existing media item by filename.
+Opens media library modal and selects an existing media item by filename. Compatible with sites using the [WP Media Folder](https://www.joomunited.com/wordpress-products/wp-media-folder) plugin, which replaces the standard media grid with a folder-based view.
 
 ```javascript
 cy.mediaLibrarySelect('#field_media_assets-media-library-wrapper', 'sample.png');
