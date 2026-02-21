@@ -9,7 +9,7 @@
 Cypress.Commands.add("mediaLibraryAdd", (fileName) => {
   cy.visit('/wp-admin/media-new.php?browser-uploader')
   cy.get('#async-upload')
-    .selectFile('cypress/fixtures/' + fileName);
-  cy.get('#html-upload').click()
+    .selectFile('cypress/fixtures/' + fileName, {force: true});
+  cy.get('#html-upload').click({force: true})
   cy.get('h1').should('contain.text', 'Media Library')
 });

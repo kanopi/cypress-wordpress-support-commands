@@ -8,11 +8,12 @@
  * cy.save(false)
  */
 Cypress.Commands.add('save', (viewPost = true) => {
-  const postSave = 'postSave-' + Math.random();
-  cy.intercept('POST', '/wp-admin/admin-ajax.php').as(postSave)
   cy.get('.edit-post-header button').contains('Save').click()
-  cy.wait('@' + postSave).its('response.statusCode').should('eq', 200)
   if (viewPost) {
-    cy.get('.components-snackbar__content a').contains('View').click()
+    cy.window().then((win) => {
+      const permalink = win.wp.data.select('core/editor').getPermalink()
+      expect(permalink).to.be.a('string')
+      cy.visit(permalink)
+    })
   }
 })

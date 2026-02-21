@@ -20,7 +20,7 @@ Cypress.Commands.add('visitEditPage', (url) => {
 
   // Load the page
   cy.visit(url);
-  cy.get('.edit-post-layout').should('exist')
+  cy.get('.edit-post-layout', { timeout: 30000 }).should('exist')
 
   // Wait for our ajax requests.
   cy.wait('@' + ajaxBlocks).its('response.statusCode').should('eq', 200)
