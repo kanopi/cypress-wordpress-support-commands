@@ -19,3 +19,6 @@ require('./setVisibility');
 require('./update');
 require('./visitEditPage');
 require('./wp');
+require('./wpGetPost');
+require('./wpUpdateTitle');
+require('./wpGetPermalink');
