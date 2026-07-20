@@ -14,8 +14,10 @@ Cypress.Commands.add('createComponentImage', (fileName, useMediaLibrary = false)
   if (useMediaLibrary) {
     cy.mediaLibrarySelect('.is-selected.wp-block-image', fileName);
   } else {
-    cy.get('.is-selected.wp-block-image').then(() => {
-      cy.get('input[type=file]')
+    // The image block and its file input live inside the editor canvas iframe;
+    // the block inspector (Alternative text) is editor chrome in the top document.
+    cy.editorCanvas().find('.is-selected.wp-block-image').then(() => {
+      cy.editorCanvas().find('.is-selected.wp-block-image input[type=file]')
         .selectFile('cypress/fixtures/' + fileName, {force: true});
       // Tried with do this with an intercept but there were inconsistent
       // failures so just using wait().
