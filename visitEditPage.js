@@ -6,11 +6,12 @@
  */
 Cypress.Commands.add('visitEditPage', (url) => {
   // Intercept common ajax requests when loading an edit page.
+  // Deliberately not /wp/v2/taxonomies: WordPress 7.1 added it to the block
+  // editor's REST preload list in wp-admin/edit-form-blocks.php, so apiFetch
+  // serves it from inline data and no request reaches the network for an
+  // intercept to see.
   const ajaxBlocks = 'ajaxBlocks-' + Math.random();
   cy.intercept('GET', '/wp-json/wp/v2/blocks?*').as(ajaxBlocks)
-
-  const ajaxTaxonomies = 'ajaxTaxonomies-' + Math.random();
-  cy.intercept('GET', '/wp-json/wp/v2/taxonomies?*').as(ajaxTaxonomies)
 
   const ajaxPosts = 'ajaxPosts-' + Math.random();
   cy.intercept('GET', '/wp-json/wp/v2/posts/*').as(ajaxPosts)
@@ -24,6 +25,5 @@ Cypress.Commands.add('visitEditPage', (url) => {
 
   // Wait for our ajax requests.
   cy.wait('@' + ajaxBlocks).its('response.statusCode').should('eq', 200)
-  cy.wait('@' + ajaxTaxonomies).its('response.statusCode').should('eq', 200)
   cy.wait('@' + ajaxWpPatternCategory).its('response.statusCode').should('eq', 200)
 })
