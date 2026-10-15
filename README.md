@@ -196,6 +196,8 @@ cy.visitEditPage('/wp-admin/post.php?post=123&action=edit');
 #### wp
 Executes WP-CLI commands through various environments (Docksal, Lando, DDEV, Pantheon, Tugboat).
 
+The environment is chosen from Cypress environment variables (`WP_IS_DOCKSAL`, `WP_IS_LANDO`, `WP_CLI_IS_DDEV`, `WP_IS_PANTHEON`, `DRUSH_IS_TUGBOAT` with `TUGBOAT_INSTANCE_ID`), set in `cypress.env.json`, as `CYPRESS_*` variables or with `--env`. They are read with `cy.env()` on Cypress 15.10 and later, including Cypress 16, and with `Cypress.env()` on older versions.
+
 ```javascript
 cy.wp('cache flush');
 cy.wp('user list');
