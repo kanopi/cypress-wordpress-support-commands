@@ -26,6 +26,23 @@ const readEnv = (keys) => {
   return cy.wrap(values, { log: false });
 };
 
+// Cypress 16 also removed cy.exec(), so run the command through the wpCliExec
+// task from plugin.js there, honouring the same options and yielding the same
+// { exitCode, stdout, stderr } result. Older versions keep using cy.exec().
+const runCommand = (exec_command, options) => {
+  if (parseInt(Cypress.version, 10) < 16) {
+    return cy.exec(exec_command, options);
+  }
+
+  const { failOnNonZeroExit = true, env, ...taskOptions } = options;
+  return cy.task('wpCliExec', { command: exec_command, env }, taskOptions).then((result) => {
+    if (failOnNonZeroExit && result.exitCode !== 0) {
+      throw new Error(`cy.wp() failed with exit code ${result.exitCode}: ${exec_command}\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`);
+    }
+    return result;
+  });
+};
+
 Cypress.Commands.add('wp', (command, options = {}) => {
   readEnv(ENV_KEYS).then((env) => {
     let exec_command = '';
@@ -53,7 +70,7 @@ Cypress.Commands.add('wp', (command, options = {}) => {
       exec_command = `tugboat -t ${env.DRUSH_IS_TUGBOAT} shell ${env.TUGBOAT_INSTANCE_ID} command="drush ${command}"`;
     }
 
-    cy.exec(exec_command, options).then((result) => {
+    runCommand(exec_command, options).then((result) => {
       cy.log(result.stdout);
       cy.wrap(result.stdout).as('wpCliOutput');
     })
