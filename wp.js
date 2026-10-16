@@ -29,15 +29,20 @@ const readEnv = (keys) => {
 // Cypress 16 also removed cy.exec(), so run the command through the wpCliExec
 // task from plugin.js there, honouring the same options and yielding the same
 // { exitCode, stdout, stderr } result. Older versions keep using cy.exec().
-const runCommand = (exec_command, options) => {
+// The task's own log entry is turned off and replaced with display_command,
+// which has secrets such as the Tugboat token masked; errors use it too.
+const runCommand = (exec_command, display_command, options) => {
   if (parseInt(Cypress.version, 10) < 16) {
     return cy.exec(exec_command, options);
   }
 
-  const { failOnNonZeroExit = true, env, ...taskOptions } = options;
-  return cy.task('wpCliExec', { command: exec_command, env }, taskOptions).then((result) => {
+  const { failOnNonZeroExit = true, env, log = true, ...taskOptions } = options;
+  if (log) {
+    cy.log('wp: ' + display_command);
+  }
+  return cy.task('wpCliExec', { command: exec_command, env }, { ...taskOptions, log: false }).then((result) => {
     if (failOnNonZeroExit && result.exitCode !== 0) {
-      throw new Error(`cy.wp() failed with exit code ${result.exitCode}: ${exec_command}\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`);
+      throw new Error(`cy.wp() failed with exit code ${result.exitCode}: ${display_command}\n\nstdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`);
     }
     return result;
   });
@@ -46,6 +51,7 @@ const runCommand = (exec_command, options) => {
 Cypress.Commands.add('wp', (command, options = {}) => {
   readEnv(ENV_KEYS).then((env) => {
     let exec_command = '';
+    let display_command = '';
 
     if (env.WP_IS_DOCKSAL) {
       exec_command = 'fin wp ' + command;
@@ -68,9 +74,10 @@ Cypress.Commands.add('wp', (command, options = {}) => {
     // Tugboat integration - requires DRUSH_IS_TUGBOAT(tugboat token), TUGBOAT_INSTANCE_ID
     if (env.DRUSH_IS_TUGBOAT) {
       exec_command = `tugboat -t ${env.DRUSH_IS_TUGBOAT} shell ${env.TUGBOAT_INSTANCE_ID} command="drush ${command}"`;
+      display_command = `tugboat -t *** shell ${env.TUGBOAT_INSTANCE_ID} command="drush ${command}"`;
     }
 
-    runCommand(exec_command, options).then((result) => {
+    runCommand(exec_command, display_command || exec_command, options).then((result) => {
       cy.log(result.stdout);
       cy.wrap(result.stdout).as('wpCliOutput');
     })
