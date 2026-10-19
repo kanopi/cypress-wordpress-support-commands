@@ -90,7 +90,9 @@ cy.createComponentImage('image-sample_01.png', true); // Use media library
 ### Component Management Commands
 
 #### selectComponent
-Opens the component inserter and selects a component by name.
+Opens the component inserter, searches for a block and inserts it.
+
+The name must match the block's title in the inserter exactly (case and spacing included); it is not a substring match. `cy.selectComponent('Image')` inserts the core Image block, never a plugin block whose title contains "Image", such as Kadence's "Image (Adv)". To insert a plugin block, pass its full title as the inserter shows it. If no block has that exact title, the command fails after the default command timeout.
 
 ```javascript
 cy.selectComponent('Heading');

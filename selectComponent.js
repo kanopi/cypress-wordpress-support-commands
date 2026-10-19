@@ -11,11 +11,18 @@ Cypress.Commands.add('selectComponent', (componentName, variationName) => {
         .should('be.visible')
         .clear({force: true})
         .type(componentName, {delay: 0, force: true});
-      // The results list updates after a debounce. cy.contains() retries
-      // until a matching block is visible, so there is no fixed wait.
-      cy.contains('.block-editor-tabbed-sidebar .block-editor-block-types-list__list-item', componentName)
+      // Match the block title exactly. A substring match clicks the first hit,
+      // so "Image" could insert a plugin block such as Kadence's
+      // "Image (Adv)". cy.contains() retries until the exact match is
+      // visible, so there is no fixed wait for the search debounce.
+      const escaped = componentName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      cy.contains('.block-editor-tabbed-sidebar .block-editor-block-types-list__item-title', new RegExp(`^\\s*${escaped}\\s*$`))
+        .closest('.block-editor-block-types-list__item')
         .should('be.visible')
-        .click()
+        // Pattern results keep loading after the blocks appear and re-render
+        // the list, which detaches the block during the actionability checks.
+        // The visibility assertion above stands in for them.
+        .click({force: true})
         .then(() => {
           // Close the sidebar when we've selected the component.
           cy.get('.editor-document-tools .editor-document-tools__inserter-toggle[aria-pressed="true"]').click()
