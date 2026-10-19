@@ -221,6 +221,31 @@ cy.wp('cache flush');
 cy.wp('user list');
 ```
 
+#### wpGetPost
+Gets the newest published post of a post type through WP-CLI, as `{ ID, post_title, post_name }`. Fails if the type has no published posts.
+
+```javascript
+cy.wpGetPost('page').then((post) => {
+  cy.visit(`/?page_id=${post.ID}`);
+});
+```
+
+#### wpUpdateTitle
+Updates a post's title through WP-CLI, which fires `save_post` as an editor save would. The title is single-quoted for the shell, so spaces and apostrophes are safe everywhere. On Pantheon, titles containing `"`, `$` or a backtick are not supported yet, because `cy.wp()` wraps the command in double quotes for SSH.
+
+```javascript
+cy.wpUpdateTitle(123, "Doctor's Note");
+```
+
+#### wpGetPermalink
+Gets a post's frontend URL as a path relative to the site (scheme and host removed, query string kept), ready for `cy.visit()`.
+
+```javascript
+cy.wpGetPermalink(123).then((path) => {
+  cy.visit(path);
+});
+```
+
 #### anonUrl404
 Tests that a URL returns a 404 response for anonymous users.
 
