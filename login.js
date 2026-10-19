@@ -31,7 +31,10 @@ Cypress.Commands.add('login', (usernameParam = '', password = '') => {
   }
 
   // Login
-  cy.wait(50) // wait for the UI to catch up
-  cy.get('#wp-submit').click();
-  cy.wait(50) // wait for the UI to catch up
+  cy.get('#wp-submit').should('be.enabled').click();
+  // Wait for WordPress to redirect away from the login form. A fixed wait
+  // let the next cy.visit() cancel the submit before the auth cookie was set,
+  // so the next admin page bounced back to wp-login.php?reauth=1. A wrong
+  // password now fails here, on the login page, instead of on a later page.
+  cy.location('pathname').should('not.include', 'wp-login.php');
 })

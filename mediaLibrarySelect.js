@@ -10,7 +10,9 @@
 Cypress.Commands.add("mediaLibrarySelect", (selector, fileName) => {
   const ajaxMediaLibrarySelect = 'mediaLibrary-' + Math.random();
   cy.intercept('POST', '/wp-admin/admin-ajax.php').as(ajaxMediaLibrarySelect)
-  cy.get(selector + ' button').contains('Media Library').click();
+  // The trigger may be inside the editor canvas iframe (e.g. an image block) or
+  // in the top document (e.g. a meta box field), so resolve it either way.
+  cy.getInEditor(selector).find('button').contains('Media Library').click();
   cy.wait('@' + ajaxMediaLibrarySelect).its('response.statusCode').should('eq', 200)
 
   cy.get('.media-modal-content').then(() => {

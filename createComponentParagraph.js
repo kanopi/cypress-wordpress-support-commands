@@ -11,12 +11,8 @@ import {randLine} from '@ngneat/falso';
  */
 Cypress.Commands.add('createComponentParagraph', (content) => {
   cy.selectComponent('Paragraph');
-  if (content) {
-    cy.get('p.is-selected')
-      .type(content)
-  } else {
-    cy.get('p.is-selected')
-      .type(randLine({lineCount: 1}))
-  }
+  // The inserted block lives inside the editor canvas iframe.
+  cy.editorCanvas().find('p.is-selected')
+    .type(content ? content : randLine({lineCount: 1}))
   cy.editorReset();
 })

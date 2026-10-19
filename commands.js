@@ -1,4 +1,5 @@
 require('./anonUrl404');
+require('./editorCanvas');
 require('./editorReset');
 require('./enterPostPassword');
 require('./createComponentHeading');
