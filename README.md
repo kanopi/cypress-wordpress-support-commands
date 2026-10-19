@@ -29,6 +29,22 @@ following:
 import './cypress-wordpress-support-commands/commands'
 ```
 
+### Cypress 16: register the WP-CLI task
+
+Cypress 16 removed `cy.exec()`, so on Cypress 16 `cy.wp()` runs WP-CLI through a `wpCliExec` task instead. Register it in `cypress.config.js`:
+
+```js
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      require('./cypress/support/cypress-wordpress-support-commands/plugin')(on, config);
+    },
+  },
+});
+```
+
+Cypress 15 and earlier keep using `cy.exec()` and need no change.
+
 Install the package using Composer:
 
 ```bash
@@ -197,6 +213,8 @@ cy.visitEditPage('/wp-admin/post.php?post=123&action=edit');
 
 #### wp
 Executes WP-CLI commands through various environments (Docksal, Lando, DDEV, Pantheon, Tugboat).
+
+The environment is chosen from Cypress environment variables (`WP_IS_DOCKSAL`, `WP_IS_LANDO`, `WP_CLI_IS_DDEV`, `WP_IS_PANTHEON`, `DRUSH_IS_TUGBOAT` with `TUGBOAT_INSTANCE_ID`), set in `cypress.env.json`, as `CYPRESS_*` variables or with `--env`. They are read with `cy.env()` on Cypress 15.10 and later, including Cypress 16, and with `Cypress.env()` on older versions. On Cypress 16 the command runs through the `wpCliExec` task (see Installation); `options` are passed through as they were to `cy.exec()` (`failOnNonZeroExit`, `timeout`, `env`, `log`), and the result is the same `{ exitCode, stdout, stderr }`.
 
 ```javascript
 cy.wp('cache flush');
