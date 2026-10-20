@@ -123,6 +123,16 @@ Clicks the page to deselect components and restore the "Add Component" button. T
 cy.editorReset();
 ```
 
+#### editorCanvas
+Yields the block editor canvas: the `<body>` of the `iframe[name="editor-canvas"]` that holds the title and blocks, or `.editor-styles-wrapper` on editors without the iframe. Chain `.find()` from it to reach block content; the editor chrome (toolbar, sidebars, inserter) is in the top document and needs a plain `cy.get()`.
+
+On Cypress 12 and later it is a query, so if the editor replaces the canvas document while it loads, Cypress re-runs it and the chained `.find()` searches the new canvas instead of failing with "subject is no longer attached to the DOM". It waits up to 30 seconds for the canvas to load; pass `timeout` to change that.
+
+```javascript
+cy.editorCanvas().find('.wp-block-post-title');
+cy.editorCanvas({ timeout: 60000 }).find('p.is-selected');
+```
+
 ### Publishing Commands
 
 #### publish
