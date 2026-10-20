@@ -68,7 +68,13 @@ Cypress.Commands.add('wp', (command, options = {}) => {
     // In the format of PANTHEON_SITE_ID.ENVIRONMENT_ID
     if (env.WP_IS_PANTHEON) {
       // Passing URI as well because drush will return HTTP links by default and not HTTPS which can cause tests to fail.
-      exec_command = 'ssh -T ' + env.WP_IS_PANTHEON + '@appserver.' + env.WP_IS_PANTHEON + '.drush.in -p 2222 -o "StrictHostKeyChecking=no" -o "AddressFamily inet" "wp --url=' + Cypress.config('baseUrl') + ' ' + command + '"';
+      // The remote command sits inside double quotes on this machine, so escape
+      // the characters double quotes still interpret. Otherwise a $VAR,
+      // backtick or $(...) in the command ran here, on the machine running
+      // Cypress, and a " ended the quoting early. Escaped, the server's shell
+      // reads the command exactly as written, as `ddev wp` would.
+      const remote_command = ('wp --url=' + Cypress.config('baseUrl') + ' ' + command).replace(/[\\"$`]/g, '\\$&');
+      exec_command = 'ssh -T ' + env.WP_IS_PANTHEON + '@appserver.' + env.WP_IS_PANTHEON + '.drush.in -p 2222 -o "StrictHostKeyChecking=no" -o "AddressFamily inet" "' + remote_command + '"';
     }
 
     // Tugboat integration - requires DRUSH_IS_TUGBOAT(tugboat token), TUGBOAT_INSTANCE_ID
